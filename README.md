@@ -20,4 +20,4 @@ Instagram on your Pebble!
 Looking for contribution!
 
 ## Web-app
-[Here's]('http://github.com/jamesgrayillustration/tinyreel_config') the repo for the configuration page app.
+[Here's](http://github.com/jamesgrayillustration/tinyreel_config) the repo for the configuration page app.
