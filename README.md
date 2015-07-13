@@ -7,7 +7,7 @@ Instagram on your Pebble!
 - Displays photos in B&W (Aplite) and/or Color (Basalt).
 - Displays a photo's like and comment count, and caption.
 
-## Future Roadmap
+## Roadmap
 - Pagination
 - Configurable color themes (?)
 - Allow De-authentication/Logout
