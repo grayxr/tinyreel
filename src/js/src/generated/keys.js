@@ -1,0 +1,15 @@
+var TYPE = {
+	ERROR: 0,
+	ENTRY: 1,
+	IMAGE: 2
+};
+var METHOD = {
+	CHUNK: 0,
+	INDEX: 1,
+	MESSAGE: 2,
+	SIZE: 3,
+	USERNAME: 4,
+	CAPTION: 5,
+	LIKES: 6,
+	COMMENTS: 7
+};

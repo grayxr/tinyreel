@@ -1,0 +1,84 @@
+{
+    "uuid": "334CF1AE-5905-49D2-9140-7B708A9E8D73",
+    "shortName": "Tiny Reel",
+    "longName": "Tiny Reel",
+    "companyName": "James Gray",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    },
+    "capabilities": [
+        "configurable"
+    ],
+    "appKeys": {
+        "chunk": 0,
+        "index": 1,
+        "message": 2,
+        "size": 3,
+        "username": 4,
+        "caption": 5,
+        "likes": 6,
+        "comments": 7,
+        "error": 8,
+        "next": 9,
+        "previous": 10,
+        "details": 11
+    },
+    "debug": true,
+    "resources": {
+        "media": [
+            {
+                "menuIcon": true,
+                "type": "png",
+                "name": "IMAGE_MENU_ICON",
+                "file": "images/menu.png"
+            },
+            {
+                "type": "png",
+                "name": "ERROR_A",
+                "file": "images/error_a.png"
+            },
+            {
+                "type": "png",
+                "name": "ERROR_B",
+                "file": "images/error_b.png"
+            },
+            {
+                "type": "png",
+                "name": "INIT_A",
+                "file": "images/init_a.png"
+            },
+            {
+                "type": "png",
+                "name": "INIT_B",
+                "file": "images/init_b.png"
+            },
+            {
+                "type": "png",
+                "name": "DETAILS_A",
+                "file": "images/details_a.png"
+            },
+            {
+                "type": "png",
+                "name": "DETAILS_B",
+                "file": "images/details_b.png"
+            },
+            {
+                "type": "png",
+                "name": "LOADING_A",
+                "file": "images/loading_a.png"
+            },
+            {
+                "type": "png",
+                "name": "LOADING_B",
+                "file": "images/loading_b.png"
+            }
+        ]
+    },
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
+    "sdkVersion": "3"
+}
