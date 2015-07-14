@@ -282,7 +282,7 @@ static void window_load(Window *window) {
 	layer_add_child(window_layer, bitmap_layer_get_layer(image_layer));
 
     message_text_layer = text_layer_create(GRect(0, bounds.size.h - 160, bounds.size.w, bounds.size.h));
-    text_layer_set_text(message_text_layer, "3, 2, 1...");
+    text_layer_set_text(message_text_layer, "Spooling...");
     text_layer_set_font(message_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
     text_layer_set_text_alignment(message_text_layer, GTextAlignmentCenter);
 	text_layer_set_overflow_mode(message_text_layer, GTextOverflowModeWordWrap);

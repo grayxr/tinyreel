@@ -198,7 +198,7 @@ function endsWith(str, suffix) {
 
 var Reel = {
     // local
-    // uri: 'http://77bed9e3.ngrok.io',
+    // uri: 'http://cd7e7ca0.ngrok.io',
     // prod
     uri: 'http://jamesgraydev.com/',
     entries: [],
@@ -270,16 +270,16 @@ var Reel = {
 	},
 
     getEntry: function(direction) {
+        //make sure we have the entries
 		if (!Reel.entries.length) return Reel.getEntries();
-        //console.log("Entry Pos: "+Reel.entryPos);
         switch(direction){
             case "next":
                 //go forward through feed
-                if(Reel.entryPos == Reel.entries.length) {
+                if(Reel.entryPos == (Reel.entries.length-1)) {
                     // TO DO: if we've reached the end, then fetch 30 more
                     // for now, just go back to the start
-                    Reel.currentEntry = Reel.entries[0];
                     Reel.entryPos = 0;
+                    Reel.currentEntry = Reel.entries[Reel.entryPos];
                 } else {
                     Reel.entryPos++;
                     Reel.currentEntry = Reel.entries[Reel.entryPos];
@@ -288,8 +288,8 @@ var Reel = {
             case "previous":
                 //go backward through feed
                 if(Reel.entryPos == 0) {
-                    Reel.currentEntry = Reel.entries[Reel.entries.length - 1];
-                    Reel.entryPos = Reel.entries.length - 1;
+                    Reel.entryPos = Reel.entries.length-1;
+                    Reel.currentEntry = Reel.entries[Reel.entryPos];
                 } else {
                     Reel.entryPos--;
                     Reel.currentEntry = Reel.entries[Reel.entryPos];
@@ -299,6 +299,8 @@ var Reel = {
                 //get first entry
                 Reel.currentEntry = Reel.entries[Reel.entryPos];
         }
+
+        //console.log("Entry Pos: "+Reel.entryPos, "Entries Amount: "+Reel.entries.length);
 
 		var entry = {};
 		entry.username = Reel.currentEntry.username || '';
@@ -397,7 +399,7 @@ var Reel = {
 		if (e.response === 'CANCELLED') return;
 		var data = JSON.parse(decodeURIComponent(e.response));
 		if (data.token) {
-            MessageQueue.sendAppMessage({ "message": "OK! LOADING..." }, null, null);
+            if(!Reel.token) MessageQueue.sendAppMessage({ "message": "OK! LOADING..." }, null, null);
 			Reel.token = data.token;
 			localStorage.setItem('token', Reel.token);
 			//Reel.auth(Reel.refresh);
