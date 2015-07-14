@@ -8,6 +8,7 @@ Instagram on your Pebble!
 - Displays a photo's like and comment count, and caption.
 
 ## Roadmap
+- Timeline pins
 - Pagination
 - Configurable color themes (?)
 - Allow De-authentication/Logout
