@@ -12,7 +12,7 @@ function sendBitmap(bitmap){
     if(i>=bitmap.length)
       return;
     i += nextSize;
-    //console.log(i + "/" + bitmap.length);
+    console.log(i + "/" + bitmap.length);
     nextSize = bitmap.length-i > CHUNK_SIZE ? CHUNK_SIZE : bitmap.length-i;
     sliced = bitmap.slice(i, i + nextSize);
     MessageQueue.sendAppMessage(
@@ -104,7 +104,7 @@ function getGifImage(url){
 
     var data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer);
     var gr = new GifReader(data);
-    //console.log("Gif size : "+ gr.width  +" " + gr.height);
+    console.log("Gif size : "+ gr.width  +" " + gr.height);
 
     var pixels = [];
     gr.decodeAndBlitFrameRGBA(0, pixels);
@@ -128,7 +128,7 @@ function getJpegImage(url){
 
     //MessageQueue.sendAppMessage({"message":"Decoding image..."}, null, null);
 
-    //console.log("Jpeg size : " + j.width + "x" + j.height);
+    console.log("Jpeg size : " + j.width + "x" + j.height);
 
     var pixels = j.getData(j.width, j.height);
 
@@ -144,7 +144,7 @@ function getJpegImage(url){
   try{
     j.load(url);
   }catch(e){
-    //console.log("Error : " + e);
+    console.log("Error : " + e);
   }
 }
 
@@ -342,7 +342,7 @@ var Reel = {
 				url += '?' + data;
 				data = null;
 			}
-			//console.log(method + ' ' + url + ' ' + data);
+			console.log(method + ' ' + url + ' ' + data);
 			var xhr = new XMLHttpRequest();
 			xhr.setRequestHeader('X-Auth-Token', Reel.token);
 			xhr.setRequestHeader('Content-Type', 'application/json');
@@ -350,7 +350,7 @@ var Reel = {
 			xhr.onload = function() {
 				if (xhr.status >= 300) {
 					if (endpoint == '/auth') {
-                        //console.log('error, login');
+                        console.log('Auth error');
                         localStorage.removeItem('token');
 						return Reel.error('GOTTA LOGIN!');
                     } else if(endpoint == '/entries') {
@@ -376,13 +376,13 @@ var Reel = {
             //console.log("is chunk data");
 			//Reel.getEntry();
         }else if(reel_method.hasOwnProperty("next")){
-            //console.log("is next btn");
+            console.log("Next");
 			Reel.getEntry("next");
         }else if(reel_method.hasOwnProperty("previous")){
-            //console.log("is previous btn");
+            console.log("Previous");
 			Reel.getEntry("previous");
         }else if(reel_method.hasOwnProperty("details")){
-            //console.log("is select/details btn");
+            console.log("Select");
 			Reel.getCurrentEntryDetails();
         }
 	},

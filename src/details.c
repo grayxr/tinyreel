@@ -30,6 +30,7 @@ void details_init(void) {
 }
 
 void details_deinit(void) {
+    window_stack_pop(true);
     window_destroy(window);
 }
 
@@ -40,13 +41,17 @@ void show_details(void) {
 void update_caption(char ca[2048]){
     text_layer_set_text(caption_text_layer, ca);
     scroll_layer_set_content_size(scroll_layer, GSize(144, text_layer_get_content_size(caption_text_layer).h + 40));
+    layer_mark_dirty(text_layer_get_layer(caption_text_layer));
+    layer_mark_dirty(scroll_layer_get_layer(scroll_layer));
 };
 
 void update_likes(char li[4]){
     text_layer_set_text(likes_text_layer, li);
+    layer_mark_dirty(text_layer_get_layer(likes_text_layer));
 };
 void update_comments(char co[4]){
     text_layer_set_text(comments_text_layer, co);
+    layer_mark_dirty(text_layer_get_layer(comments_text_layer));
 };
 
 static void click_config_provider(void *context) {

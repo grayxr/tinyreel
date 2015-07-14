@@ -51,7 +51,7 @@ void prepend(char* s, const char* t)
 
 static void cb_in_received_handler(DictionaryIterator *iter, void *context) {
 
-	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Incoming data");
+	APP_LOG(APP_LOG_LEVEL_DEBUG, "Incoming data");
 
 	// Reset
 	ErrorExists = 0;
@@ -60,9 +60,9 @@ static void cb_in_received_handler(DictionaryIterator *iter, void *context) {
 	// Set any messages
     Tuple *message_tuple = dict_find(iter, KEY_MESSAGE);
     if(message_tuple){
-        //text_layer_set_background_color(message_text_layer, GColorClear);
         strcpy(msg_str, message_tuple->value->cstring);
         text_layer_set_text(message_text_layer, msg_str);
+        layer_mark_dirty(text_layer_get_layer(message_text_layer));
     }
 
     // Get the bitmap
@@ -96,8 +96,9 @@ static void cb_in_received_handler(DictionaryIterator *iter, void *context) {
             #endif
 
             bitmap_layer_set_bitmap(image_layer, image);
-			text_layer_set_text(message_text_layer,"");
             layer_mark_dirty(bitmap_layer_get_layer(image_layer));
+			text_layer_set_text(message_text_layer,"");
+            layer_mark_dirty(text_layer_get_layer(message_text_layer));
 
             ImgLoaded = 1;
             Loading = 0;
@@ -107,6 +108,7 @@ static void cb_in_received_handler(DictionaryIterator *iter, void *context) {
     		if(ErrorExists == 1){
     			text_layer_set_background_color(username_text_layer, GColorClear);
     		}
+            layer_mark_dirty(text_layer_get_layer(username_text_layer));
         }
     }
 
@@ -114,13 +116,17 @@ static void cb_in_received_handler(DictionaryIterator *iter, void *context) {
     Tuple *error_tuple = dict_find(iter, KEY_ERROR);
     if(error_tuple){
         text_layer_set_text(message_text_layer,"");
+        layer_mark_dirty(text_layer_get_layer(message_text_layer));
 
 		// Clear the image
 		if(image){
-			gbitmap_destroy(image);
+    		gbitmap_destroy(image);
+            if(data_image){
+                free(data_image);
+            }
 			image = NULL;
+    		bitmap_layer_set_bitmap(image_layer, image);
 		}
-		bitmap_layer_set_bitmap(image_layer, image);
 
         Loading = 0;
 		ErrorExists = 1;
@@ -131,7 +137,9 @@ static void cb_in_received_handler(DictionaryIterator *iter, void *context) {
 			image = gbitmap_create_with_resource(RESOURCE_ID_ERROR_A);
 		#endif
 		bitmap_layer_set_bitmap(image_layer, image);
+        layer_mark_dirty(bitmap_layer_get_layer(image_layer));
         text_layer_set_text(error_text_layer, error_tuple->value->cstring);
+        layer_mark_dirty(text_layer_get_layer(error_text_layer));
     }
 
 	// Prepare the username
@@ -178,20 +186,19 @@ static void load_next(){
 		#else
 			image = gbitmap_create_with_resource(RESOURCE_ID_LOADING_A);
 		#endif
+    	bitmap_layer_set_bitmap(image_layer, image);
+        layer_mark_dirty(bitmap_layer_get_layer(image_layer));
 	}
-	bitmap_layer_set_bitmap(image_layer, image);
 
 	// Set loading text
 	text_layer_set_text(message_text_layer, "DEVELOPING...");
+    layer_mark_dirty(text_layer_get_layer(message_text_layer));
     text_layer_set_text(username_text_layer, "");
     text_layer_set_background_color(username_text_layer, GColorClear);
+    layer_mark_dirty(text_layer_get_layer(username_text_layer));
 };
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-
-    if(Loading == 1){
-	    text_layer_set_text(message_text_layer, "PATIENCE!");
-    }
 
 	if(ErrorExists == 0 && Loading == 0){
 
@@ -203,16 +210,18 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
 	    dict_write_int(iter, KEY_DETAILS, &value, 1, true);
 	    dict_write_end(iter);
 	    app_message_outbox_send();
-	}
+	} else {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Select disabled.");
+    }
+
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
 
     if(Loading == 1){
 	    text_layer_set_text(message_text_layer, "PATIENCE!");
-    }
-
-	if(ErrorExists == 0 && Loading == 0){
+        layer_mark_dirty(text_layer_get_layer(message_text_layer));
+    } else if(ErrorExists == 0 && Loading == 0){
 
 		load_next();
 
@@ -222,16 +231,17 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
 	    dict_write_int(iter, KEY_NEXT, &value, 1, true);
 	    dict_write_end(iter);
 	    app_message_outbox_send();
-	}
+	} else {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Down disabled.");
+    }
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
 
     if(Loading == 1){
 	    text_layer_set_text(message_text_layer, "PATIENCE!");
-    }
-
-	if(ErrorExists == 0 && Loading == 0){
+        layer_mark_dirty(text_layer_get_layer(message_text_layer));
+    } else if(ErrorExists == 0 && Loading == 0){
 
 		load_next();
 
@@ -241,7 +251,9 @@ static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
 	    dict_write_int(iter, KEY_PREVIOUS, &value, 1, true);
 	    dict_write_end(iter);
 	    app_message_outbox_send();
-	}
+	} else {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Up disabled.");
+    }
 }
 
 static void click_config_provider(void *context) {
@@ -282,7 +294,7 @@ static void window_load(Window *window) {
 	layer_add_child(window_layer, bitmap_layer_get_layer(image_layer));
 
     message_text_layer = text_layer_create(GRect(0, bounds.size.h - 160, bounds.size.w, bounds.size.h));
-    text_layer_set_text(message_text_layer, "Spooling...");
+    text_layer_set_text(message_text_layer, "Loading...");
     text_layer_set_font(message_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
     text_layer_set_text_alignment(message_text_layer, GTextAlignmentCenter);
 	text_layer_set_overflow_mode(message_text_layer, GTextOverflowModeWordWrap);
@@ -316,11 +328,10 @@ static void window_load(Window *window) {
 }
 
 static void window_unload(Window *window) {
-    //text_layer_destroy(message_text_layer);
-    text_layer_destroy(error_text_layer);
-
-    text_layer_destroy(username_text_layer);
     bitmap_layer_destroy(image_layer);
+    text_layer_destroy(message_text_layer);
+    text_layer_destroy(error_text_layer);
+    text_layer_destroy(username_text_layer);
 
     if(image){
         gbitmap_destroy(image);
