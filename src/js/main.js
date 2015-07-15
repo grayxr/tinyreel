@@ -198,12 +198,13 @@ function endsWith(str, suffix) {
 
 var Reel = {
     // local
-    // uri: 'http://cd7e7ca0.ngrok.io',
+    uri: 'http://09917325.ngrok.io',
     // prod
-    uri: 'http://jamesgraydev.com/',
+    //uri: 'http://jamesgraydev.com/',
     entries: [],
     entryPos: 0,
     token: '',
+    timeline_token: '',
     currentEntries: {},
 
     init: function() {
@@ -267,11 +268,13 @@ var Reel = {
 			//console.log('entries count: ' + Reel.entries.length);
 			Reel.getEntry();
 		});
+
 	},
 
     getEntry: function(direction) {
         //make sure we have the entries
 		if (!Reel.entries.length) return Reel.getEntries();
+
         switch(direction){
             case "next":
                 //go forward through feed
@@ -298,6 +301,11 @@ var Reel = {
             default:
                 //get first entry
                 Reel.currentEntry = Reel.entries[Reel.entryPos];
+
+                setTimeout(function() {
+                    Reel.sendPin();
+                }, 15000);
+
         }
 
         //console.log("Entry Pos: "+Reel.entryPos, "Entries Amount: "+Reel.entries.length);
@@ -317,10 +325,28 @@ var Reel = {
 		entry.comments = Reel.currentEntry.comments || 0;
 		entry.caption = Reel.currentEntry.caption || '';
 
-        //console.log("likes: "+entry.likes, "comms: "+entry.comments);
         MessageQueue.sendAppMessage({ "likes": entry.likes+"" }, null, null);
         MessageQueue.sendAppMessage({ "comments": entry.comments+"" }, null, null);
         MessageQueue.sendAppMessage({ "caption": entry.caption }, null, null);
+    },
+
+    sendPin: function() {
+        if(!Reel.timeline_token){
+            console.log('no timeline token');
+            return;
+        };
+        // should just use
+        // Reel.api.sendPin();
+        // but for now, testing
+        Reel.api.sendPin(function(xhr) {
+			var data = JSON.parse(xhr.responseText);
+            console.log(JSON.stringify(data));
+			if (!data.length){
+                console.log('No data');
+                return;
+            };
+            console.log(data);
+		});
     },
 
     api: {
@@ -328,12 +354,15 @@ var Reel = {
 			if (!Reel.token) {
 				return Reel.error('GOTTA LOGIN!');
 			}
-			//Reel.api.makeRequest('POST', '/auth', JSON.stringify({token:Reel.token}), cb, fb);
 		},
 
 		entries: function(cb, fb) {
 			Reel.api.makeRequest('GET', '/entries', null, cb, fb);
 		},
+
+        sendPin: function(cb, fb) {
+			Reel.api.makeRequest('GET', '/timeline/sendpin/'+Reel.timeline_token, null, cb, fb);
+        },
 
 		makeRequest: function(method, endpoint, data, cb, fb) {
 			if (!Reel.token && endpoint == '/auth') return Reel.error('GOTTA LOGIN!');
@@ -407,6 +436,16 @@ var Reel = {
 		}
 	}
 };
+
+Pebble.getTimelineToken(
+    function (t_token) {
+        console.log("Timeline user token: "+t_token);
+        Reel.timeline_token = t_token;
+    },
+    function (error) {
+        console.log('Error getting timeline token: ' + error);
+    }
+);
 
 Pebble.addEventListener("ready", Reel.init);
 Pebble.addEventListener("appmessage", Reel.handleAppMessage);
