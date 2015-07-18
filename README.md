@@ -1,6 +1,6 @@
 TINY REEL
 ============
-Instagram on your Pebble!
+View Instagram photos on your Pebble!
 
 ## Features
 - Authenticates with Instagram and fetches 30 items from your feed.

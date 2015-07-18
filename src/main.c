@@ -100,6 +100,9 @@ static void cb_in_received_handler(DictionaryIterator *iter, void *context) {
 			text_layer_set_text(message_text_layer,"");
             layer_mark_dirty(text_layer_get_layer(message_text_layer));
 
+            vibes_short_pulse();
+            light_enable_interaction();
+
             ImgLoaded = 1;
             Loading = 0;
 
@@ -140,6 +143,8 @@ static void cb_in_received_handler(DictionaryIterator *iter, void *context) {
         layer_mark_dirty(bitmap_layer_get_layer(image_layer));
         text_layer_set_text(error_text_layer, error_tuple->value->cstring);
         layer_mark_dirty(text_layer_get_layer(error_text_layer));
+        vibes_short_pulse();
+        light_enable_interaction();
     }
 
 	// Prepare the username
